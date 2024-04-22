@@ -52,18 +52,6 @@ class _GameSearchPageState extends State<GameSearchPage> {
                 ),
               ),
             ),
-            FutureBuilder<int>(
-              future: _counter.getSearchCount(), // Obtiene el contador de búsquedas futuras
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // Muestra un indicador de carga si el futuro aún está esperando
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}'); // Muestra un mensaje de error si ocurre un error al obtener el contador
-                } else {
-                  return Text('Searchs: ${snapshot.data}'); // Muestra el contador de búsquedas si se obtiene correctamente
-                }
-              },
-            ),
           ],
         ),
       ),
