@@ -1,37 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(MyApp());
-}
+const String supabaseUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.com';
+const String supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI';
 
-class MyApp extends StatelessWidget {
-  // Define las credenciales de tu base de datos de Supabase
-  final String supabaseUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.com';
-  final String supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI';
+final supabaseClient = SupabaseClient(supabaseUrl, supabaseKey);
 
-  @override
-  Widget build(BuildContext context) {
-    // Configura la conexión con Supabase
-    final supabaseClient = SupabaseClient(supabaseUrl, supabaseKey);
-
-    return MaterialApp(
-      title: 'Registro de Usuario',
-      home: RegistrationScreen(supabaseClient: supabaseClient),
-    );
-  }
-}
-
-class RegistrationScreen extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final SupabaseClient supabaseClient;
 
-  RegistrationScreen({required this.supabaseClient});
+  RegisterPage({required this.supabaseClient});
 
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  _RegisterPage createState() => _RegisterPage();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class _RegisterPage extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   late String username;
   late String email;
@@ -103,28 +87,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 },
                 onSaved: (value) {
                   confirmPassword = value!;
-                },
-              ),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Género de videojuego'),
-                value: genre,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    genre = newValue!;
-                  });
-                },
-                items: <String>['Acción', 'Aventura', 'Estrategia', 'RPG', 'Deportes']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, selecciona un género de videojuego';
-                  }
-                  return null;
                 },
               ),
               SizedBox(height: 16.0),

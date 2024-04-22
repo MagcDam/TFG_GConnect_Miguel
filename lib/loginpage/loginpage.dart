@@ -1,37 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(MyApp());
-}
+const String supabaseUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.com';
+const String supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI';
 
-class MyApp extends StatelessWidget {
-    // Define las credenciales de tu base de datos de Supabase
-  final String supabaseUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.com';
-  final String supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI';
+final supabaseClient = SupabaseClient(supabaseUrl, supabaseKey);
 
-  @override
-  Widget build(BuildContext context) {
-    // Configura la conexión con Supabase
-    final supabaseClient = SupabaseClient(supabaseUrl, supabaseKey);
-
-    return MaterialApp(
-      title: 'Inicio de sesion',
-      home: LoginScreen(supabaseClient: supabaseClient),
-    );
-  }
-}
-
-class LoginScreen extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   final SupabaseClient supabaseClient;
 
-  LoginScreen({required this.supabaseClient});
+  LoginPage({required this.supabaseClient});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _LoginPage createState() => _LoginPage();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginPage extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   late String email;
   late String password;
