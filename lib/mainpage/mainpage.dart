@@ -16,60 +16,66 @@ class mainpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Gconnect'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'GCONNECT',
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+      body: Container(
+        color: const Color.fromARGB(255, 39, 39, 39),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/logotfg.png',
+                width: 500,
+                height: 500,
               ),
-            ),
-            SizedBox(height: 10.0),
-            Text(
-              'Alpha 0.1.2',
-              style: TextStyle(
-                fontSize: 12.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RegisterPage(supabaseClient: supabaseClient),
-                  ),
-                );
-              },
-              child: Text('Get Started'),
-            ),
-            SizedBox(height: 10.0),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(supabaseClient: supabaseClient)
-                    ),
-                );
-              },
-              child: Text(
-                'Do you already have an account? Log in here!',
+              SizedBox(height: 10.0),
+              Text(
+                'Alpha 0.1.2',
                 style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // Cambiado a blanco
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegisterPage(supabaseClient: supabaseClient),
+                    ),
+                  );
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red), // Cambiado a rojo
+                ),
+                child: Text(
+                  'Get Started',
+                  style: TextStyle(
+                    color: Colors.white, // Cambiado a blanco
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.0),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(supabaseClient: supabaseClient)
+                      ),
+                  );
+                },
+                child: Text(
+                  'Do you already have an account? Log in here!',
+                  style: TextStyle(
+                    color: Colors.red, // Cambiado a rojo
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

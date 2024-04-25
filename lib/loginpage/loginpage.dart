@@ -12,20 +12,27 @@ class LoginPage extends StatefulWidget {
   LoginPage({required this.supabaseClient});
 
   @override
-  _LoginPage createState() => _LoginPage();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPage extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  late String email;
-  late String password;
+  late String email = 'merla';
+  late String password = '1';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inicio de sesion'),
+        title: Text(
+          'Inicio de Sesión',
+          style: TextStyle(
+            color: Colors.red,
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       ),
+      backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -34,19 +41,40 @@ class _LoginPage extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Correo electronico'),
+                decoration: InputDecoration(
+                  labelText: 'Correo electrónico',
+                  labelStyle: TextStyle(color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, ingresa el correo electronico';
+                    return 'Por favor, ingresa un correo electrónico';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  email = value!;
+                  setState(() {
+                    email = value!;
+                  });
                 },
               ),
+              SizedBox(height: 10.0),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Contraseña'),
+                decoration: InputDecoration(
+                  labelText: 'Contraseña',
+                  labelStyle: TextStyle(color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -55,7 +83,9 @@ class _LoginPage extends State<LoginPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  password = value!;
+                  setState(() {
+                    password = value!;
+                  });
                 },
               ),
               SizedBox(height: 16.0),
@@ -63,11 +93,22 @@ class _LoginPage extends State<LoginPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    // Verificar credenciales en la base de datos de Supabase
-                    loginUser(email, password);
+                    // Imprimir los valores para depuración
+                    print('Correo electrónico: $email');
+                    print('Contraseña: $password');
+                    // Autenticarse utilizando Supabase
+                    authenticateUser(email, password);
                   }
                 },
-                child: Text('Iniciar sesion'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                ),
+                child: Text(
+                  'Iniciar Sesión',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),
@@ -76,17 +117,16 @@ class _LoginPage extends State<LoginPage> {
     );
   }
 
-  Future<void> loginUser(String email, String password) async {
-
+  Future<void> authenticateUser(String email, String password) async {
     final response = await widget.supabaseClient.auth.signInWithPassword(
-      email: email, 
+      email: email,
       password: password,
     );
 
     if (response.user != null) {
-      print('Inicio de sesion exitoso');
+      print('Inicio de sesión exitoso');
     } else {
-      print('Error al iniciar seesion: $response');
+      print('Error al iniciar sesión: $response');
     }
   }
 }

@@ -17,18 +17,24 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPage extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  late String username;
-  late String email;
-  late String password;
-  late String confirmPassword;
-  late String genre;
+  late String username = 'Paco';
+  late String email = 'merla';
+  late String password = '1';
+  late String confirmPassword = '1';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro de Usuario'),
+        title: Text(
+          'Registro de Usuario',
+          style: TextStyle(
+            color: Colors.red, // Texto del AppBar en rojo
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 39, 39, 39), // Color del AppBar en negro
       ),
+      backgroundColor: const Color.fromARGB(255, 39, 39, 39), // Color de fondo en negro
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -37,7 +43,16 @@ class _RegisterPage extends State<RegisterPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Nombre de usuario'),
+                decoration: InputDecoration(
+                  labelText: 'Nombre de usuario',
+                  labelStyle: TextStyle(color: Colors.white), // Texto del label en blanco
+                  filled: true,
+                  fillColor: Colors.grey[800], // Color del campo de texto
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0), // Bordes redondeados
+                  ),
+                ),
+                style: TextStyle(color: Colors.white), // Color del texto en blanco
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, ingresa un nombre de usuario';
@@ -45,11 +60,23 @@ class _RegisterPage extends State<RegisterPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  username = value!;
+                  setState(() {
+                    username = value!;
+                  });
                 },
               ),
+              SizedBox(height: 10.0),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Correo electrónico'),
+                decoration: InputDecoration(
+                  labelText: 'Correo electrónico',
+                  labelStyle: TextStyle(color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, ingresa un correo electrónico';
@@ -57,11 +84,23 @@ class _RegisterPage extends State<RegisterPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  email = value!;
+                  setState(() {
+                    email = value!;
+                  });
                 },
               ),
+              SizedBox(height: 10.0),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Contraseña'),
+                decoration: InputDecoration(
+                  labelText: 'Contraseña',
+                  labelStyle: TextStyle(color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -70,11 +109,23 @@ class _RegisterPage extends State<RegisterPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  password = value!;
+                  setState(() {
+                    password = value!;
+                  });
                 },
               ),
+              SizedBox(height: 10.0),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Confirmar contraseña'),
+                decoration: InputDecoration(
+                  labelText: 'Confirmar contraseña',
+                  labelStyle: TextStyle(color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -86,7 +137,9 @@ class _RegisterPage extends State<RegisterPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  confirmPassword = value!;
+                  setState(() {
+                    confirmPassword = value!;
+                  });
                 },
               ),
               SizedBox(height: 16.0),
@@ -94,11 +147,22 @@ class _RegisterPage extends State<RegisterPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
+                    // Imprimir los valores para depuración
+                    print('Contraseña: $password');
+                    print('Confirmar contraseña: $confirmPassword');
                     // Guardar datos en la base de datos de Supabase
-                    insertUser(username, email, password, genre);
+                    insertUser(username, email, password);
                   }
                 },
-                child: Text('Registrarse'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red), // Botón en rojo
+                ),
+                child: Text(
+                  'Registrarse',
+                  style: TextStyle(
+                    color: Colors.white, // Texto del botón en blanco
+                  ),
+                ),
               ),
             ],
           ),
@@ -107,15 +171,14 @@ class _RegisterPage extends State<RegisterPage> {
     );
   }
 
-  Future<void> insertUser(String usuario, String email, String password, String genre) async {
+  Future<void> insertUser(String usuario, String email, String password) async {
     final newUser = {
-      'username': usuario, // Utiliza el parámetro 'usuario' en lugar de la variable 'username'
+      'username': usuario,
       'email': email,
       'password': password,
-      'genre': genre,
     };
 
-    final response = await widget.supabaseClient.from('usuarios').insert(newUser); // Usa la instancia de supabaseClient desde MyApp
+    final response = await widget.supabaseClient.from('usuarios').insert(newUser);
 
     if (response.error == null) {
       print('Usuario insertado correctamente');
@@ -123,5 +186,4 @@ class _RegisterPage extends State<RegisterPage> {
       print('Error al insertar usuario: ${response.error}');
     }
   }
-
 }
