@@ -12,15 +12,33 @@ class RegisterPage extends StatefulWidget {
   RegisterPage({required this.supabaseClient});
 
   @override
-  _RegisterPage createState() => _RegisterPage();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _RegisterPage extends State<RegisterPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  late String username = 'Paco';
-  late String email = 'merla';
-  late String password = '1';
-  late String confirmPassword = '1';
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController = TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +61,7 @@ class _RegisterPage extends State<RegisterPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: _usernameController,
                 decoration: InputDecoration(
                   labelText: 'Nombre de usuario',
                   labelStyle: TextStyle(color: Colors.white), // Texto del label en blanco
@@ -59,14 +78,10 @@ class _RegisterPage extends State<RegisterPage> {
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  setState(() {
-                    username = value!;
-                  });
-                },
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Correo electrónico',
                   labelStyle: TextStyle(color: Colors.white),
@@ -83,14 +98,10 @@ class _RegisterPage extends State<RegisterPage> {
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  setState(() {
-                    email = value!;
-                  });
-                },
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
                   labelStyle: TextStyle(color: Colors.white),
@@ -108,14 +119,10 @@ class _RegisterPage extends State<RegisterPage> {
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  setState(() {
-                    password = value!;
-                  });
-                },
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                controller: _confirmPasswordController,
                 decoration: InputDecoration(
                   labelText: 'Confirmar contraseña',
                   labelStyle: TextStyle(color: Colors.white),
@@ -131,15 +138,10 @@ class _RegisterPage extends State<RegisterPage> {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, confirma tu contraseña';
                   }
-                  if (value != password) {
+                  if (value != _passwordController.text) {
                     return 'Las contraseñas no coinciden';
                   }
                   return null;
-                },
-                onSaved: (value) {
-                  setState(() {
-                    confirmPassword = value!;
-                  });
                 },
               ),
               SizedBox(height: 16.0),
@@ -148,10 +150,10 @@ class _RegisterPage extends State<RegisterPage> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     // Imprimir los valores para depuración
-                    print('Contraseña: $password');
-                    print('Confirmar contraseña: $confirmPassword');
+                    print('Contraseña: ${_passwordController.text}');
+                    print('Confirmar contraseña: ${_confirmPasswordController.text}');
                     // Guardar datos en la base de datos de Supabase
-                    insertUser(username, email, password);
+                    insertUser(_usernameController.text, _emailController.text, _passwordController.text);
                   }
                 },
                 style: ButtonStyle(
