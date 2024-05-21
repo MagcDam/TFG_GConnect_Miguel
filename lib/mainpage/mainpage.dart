@@ -10,8 +10,9 @@ const String supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXB
 final supabaseClient = SupabaseClient(supabaseUrl, supabaseKey); // Cliente de Supabase
 
 // Clase que representa la página principal
+// ignore: camel_case_types
 class mainpage extends StatelessWidget {
-  const mainpage({Key? key, required this.supabaseClient}) : super(key: key); // Constructor
+  const mainpage({super.key, required this.supabaseClient}); // Constructor
 
   final SupabaseClient supabaseClient; // Cliente de Supabase
 

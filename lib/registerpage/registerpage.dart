@@ -10,9 +10,10 @@ const String supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXB
 class RegisterPage extends StatefulWidget {
   final SupabaseClient supabaseClient;
 
-  RegisterPage({required this.supabaseClient});
+  const RegisterPage({super.key, required this.supabaseClient});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterPageState createState() => _RegisterPageState();
 }
 

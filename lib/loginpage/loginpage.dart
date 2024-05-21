@@ -14,9 +14,10 @@ final supabaseClient = SupabaseClient(supabaseUrl, supabaseKey);
 class LoginPage extends StatefulWidget {
   final SupabaseClient supabaseClient;
 
-  LoginPage({required this.supabaseClient});
+  const LoginPage({super.key, required this.supabaseClient});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -43,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Inicio de Sesión', // Título de la barra de la aplicación
           style: TextStyle(
             color: Colors.red, // Color del texto del título
@@ -53,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       backgroundColor: const Color.fromARGB(255, 39, 39, 39), // Color de fondo de la pantalla
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey, // Asignación de la clave global al formulario
           child: Column(
@@ -63,14 +64,14 @@ class _LoginPageState extends State<LoginPage> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Correo electrónico', // Etiqueta del campo de correo electrónico
-                  labelStyle: TextStyle(color: Colors.white), // Estilo de la etiqueta
+                  labelStyle: const TextStyle(color: Colors.white), // Estilo de la etiqueta
                   filled: true,
                   fillColor: Colors.grey[800], // Color de fondo del campo de entrada
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0), // Borde redondeado
                   ),
                 ),
-                style: TextStyle(color: Colors.white), // Color del texto
+                style: const TextStyle(color: Colors.white), // Color del texto
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, ingresa un correo electrónico'; // Validación de correo electrónico vacío
@@ -78,19 +79,19 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 10.0), // Separación entre campos
+              const SizedBox(height: 10.0), // Separación entre campos
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Contraseña', // Etiqueta del campo de contraseña
-                  labelStyle: TextStyle(color: Colors.white), // Estilo de la etiqueta
+                  labelStyle: const TextStyle(color: Colors.white), // Estilo de la etiqueta
                   filled: true,
                   fillColor: Colors.grey[800], // Color de fondo del campo de entrada
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0), // Borde redondeado
                   ),
                 ),
-                style: TextStyle(color: Colors.white), // Color del texto
+                style: const TextStyle(color: Colors.white), // Color del texto
                 obscureText: true, // Mostrar puntos en lugar de texto para la contraseña
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -99,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 16.0), // Separación entre el botón y los campos de entrada
+              const SizedBox(height: 16.0), // Separación entre el botón y los campos de entrada
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -114,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.red), // Color de fondo del botón
                 ),
-                child: Text(
+                child: const Text(
                   'Iniciar Sesión', // Texto del botón
                   style: TextStyle(
                     color: Colors.white, // Color del texto del botón

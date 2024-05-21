@@ -9,6 +9,7 @@ class GameList extends StatefulWidget {
   const GameList({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _GameListState createState() => _GameListState();
 }
 
@@ -42,8 +43,10 @@ class _GameListState extends State<GameList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Most popular games',
-        style: TextStyle(color: Colors.red),),
+        title: const Text(
+          'Most popular games',
+          style: TextStyle(color: Colors.red),
+        ),
         backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       ),
       drawer: Drawer(
@@ -52,9 +55,9 @@ class _GameListState extends State<GameList> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              DrawerHeader(
+              const DrawerHeader(
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 39, 39, 39),
+                  color: Color.fromARGB(255, 39, 39, 39),
                 ),
                 child: Text(
                   'GConnect Menu',
@@ -62,26 +65,26 @@ class _GameListState extends State<GameList> {
                 ),
               ),
               ListTile(
-                title: Text(
+                title: const Text(
                   'Search',
                   style: TextStyle(color: Colors.red),
                 ),
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => GameSearchPage()),
+                    MaterialPageRoute(builder: (context) => const GameSearchPage()),
                   );
                 },
               ),
               ListTile(
-                title: Text(
+                title: const Text(
                   'Credits',
                   style: TextStyle(color: Colors.red),
                 ),
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => creditspage()),
+                    MaterialPageRoute(builder: (context) => const creditspage()),
                   );
                 },
               ),
@@ -91,12 +94,12 @@ class _GameListState extends State<GameList> {
       ),
       body: Container(
         color: const Color.fromARGB(255, 39, 39, 39),
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           children: [
             Expanded(
               child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
@@ -122,15 +125,22 @@ class _GameListState extends State<GameList> {
                       child: Column(
                         children: [
                           Expanded(
-                            child: Image.network(
-                              games[index]['background_image'],
-                              fit: BoxFit.cover,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              ),
+                              child: Image.network(
+                                games[index]['background_image'],
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
                             ),
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           Text(
                             games[index]['name'],
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ],
                       ),
@@ -139,20 +149,21 @@ class _GameListState extends State<GameList> {
                 },
               ),
             ),
-            SizedBox(height: 20), // Espacio entre la lista de juegos y el botón
+            const SizedBox(height: 20), // Espacio entre la lista de juegos y el botón
             Material(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
               child: ElevatedButton(
                 onPressed: fetchGames,
-                child: Text(
+                // ignore: sort_child_properties_last
+                child: const Text(
                   'Load more games',
                   style: TextStyle(color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 ),
               ),
             ),
