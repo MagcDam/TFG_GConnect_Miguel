@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gconnect/gamedetailpage/gamedetailpage.dart';
 import 'package:gconnect/creditspage/creditspage.dart';
 import 'package:gconnect/gamesearchpage/gamesearchpage.dart';
+import 'package:gconnect/profilepage/userprofilepage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -17,6 +18,7 @@ class _GameListState extends State<GameList> {
   final int pageSize = 39;
   int currentPage = 1;
   List<dynamic> games = [];
+  int? userId;
 
   Future<void> fetchGames() async {
     final Uri uri = Uri.parse(
@@ -37,6 +39,35 @@ class _GameListState extends State<GameList> {
   void initState() {
     super.initState();
     fetchGames();
+    getUserData();
+  }
+
+    Future<void> getUserData() async {
+    const String apiUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users?select=userId'; 
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI',
+          'Content-Type': 'application/json'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data is List && data.isNotEmpty) {
+          setState(() {
+            userId = data[0]['userId'];
+          });
+        } else {
+          print('No users found or data format is not a list');
+        }
+      } else {
+        print('Error en la solicitud: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   @override
@@ -73,6 +104,18 @@ class _GameListState extends State<GameList> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const GameSearchPage()),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text(
+                  'Profile',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserProfilePage(userId: userId)),
                   );
                 },
               ),

@@ -180,8 +180,8 @@ class _RegisterPageState extends State<RegisterPage> {
     //pop up error 
     print('Estoy dentro de insert user');
     final Map<String, dynamic> userData = {
-      'username': _usernameController.text,
       'email': _emailController.text,
+      'username': _usernameController.text,
       'password': _passwordController.text,
     };
 
