@@ -7,7 +7,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class GameList extends StatefulWidget {
-  const GameList({super.key});
+  final String? accessToken;
+  final String? email;
+
+  const GameList({super.key, required this.accessToken, required this.email});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -42,33 +45,38 @@ class _GameListState extends State<GameList> {
     getUserData();
   }
 
-    Future<void> getUserData() async {
-    const String apiUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users?select=userId'; 
-    try {
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI',
-          'Content-Type': 'application/json'
-        },
-      );
+Future<void> getUserData() async {
+  print('buscaid');
+  const String apiUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users'; 
+  String? email = widget.email;
+  print(email);
+  try {
+    final response = await http.get(
+      Uri.parse('$apiUrl?email=eq.$email'),
+      headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI',
+        'Authorization': 'Bearer ${widget.accessToken}',
+        'Content-Type': 'application/json'
+      },
+    );
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data is List && data.isNotEmpty) {
-          setState(() {
-            userId = data[0]['userId'];
-          });
-        } else {
-          print('No users found or data format is not a list');
-        }
-      } else {
-        print('Error en la solicitud: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print('Datos recibidos: $data'); // Imprime el JSON completo para ver su estructura
+
+      setState(() {
+        userId = data[0]['userId']; // Ajusta 'id' si es necesario según la estructura del JSON
+      });
+    } else {
+      print('Error en la solicitud: ${response.statusCode}');
     }
+  } catch (e) {
+    print('Error: $e');
   }
+
+  print('User ID: $userId'); // Verifica si el userId se ha establecido correctamente
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +111,7 @@ class _GameListState extends State<GameList> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const GameSearchPage()),
+                    MaterialPageRoute(builder: (context) => GameSearchPage(userId: userId)),
                   );
                 },
               ),
@@ -117,6 +125,7 @@ class _GameListState extends State<GameList> {
                     context,
                     MaterialPageRoute(builder: (context) => UserProfilePage(userId: userId)),
                   );
+                  print('user: $userId');
                 },
               ),
               ListTile(
@@ -156,6 +165,7 @@ class _GameListState extends State<GameList> {
                         MaterialPageRoute(
                           builder: (context) => GameDetailPage(
                             gameDetails: games[index],
+                            userId: userId,
                           ),
                         ),
                       );

@@ -5,7 +5,8 @@ import '../gamedetailpage/gamedetailpage.dart';
 import '../searchcounter/searchcounter.dart'; // Importa la clase SearchCounter
 
 class GameSearchPage extends StatefulWidget {
-  const GameSearchPage({super.key}); // Constructor de la clase GameSearchPage
+  final int? userId;
+  const GameSearchPage({super.key, required this.userId}); // Constructor de la clase GameSearchPage
 
   @override
   // ignore: library_private_types_in_public_api
@@ -89,7 +90,8 @@ class _GameSearchPageState extends State<GameSearchPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => GameDetailPage(
-                      gameDetails: searchResults[index], // Pasa los detalles del juego seleccionado a la página de detalles del juego
+                      gameDetails: searchResults[index],
+                      userId: widget.userId, // Pasa los detalles del juego seleccionado a la página de detalles del juego
                     ),
                   ),
                 );

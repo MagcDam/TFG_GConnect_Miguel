@@ -15,7 +15,7 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> {
   String? username;
   int favoriteCount = 0;
-  List<Map<String, dynamic>> favoriteGames = [];
+  List<dynamic> favoriteGames = [];
 
   @override
   void initState() {
@@ -61,7 +61,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       if (data is List) {
         setState(() {
           favoriteCount = data.length;
-          favoriteGames = List<Map<String, dynamic>>.from(data);
+          favoriteGames = data;
         });
       }
     } else {
@@ -85,8 +85,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       appBar: AppBar(
-        title: const Text('Perfil de Usuario'),
+        title: const Text('Perfil de Usuario', style: TextStyle(color: Colors.red),
+        ),
+        backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -95,17 +98,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
           children: [
             Text(
               username ?? 'Cargando...',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 8.0),
             Text(
               'Contador de juegos favoritos: $favoriteCount',
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18, color: Colors.red),
             ),
             const SizedBox(height: 16.0),
             const Text(
               'Juegos favoritos',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
             ),
             const SizedBox(height: 8.0),
             Expanded(
@@ -117,7 +120,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
                 itemCount: favoriteGames.length,
                 itemBuilder: (context, index) {
-                  final gameId = favoriteGames[index]['gameId'];
+                  final game = favoriteGames[index];
+                  final gameId = game['gameId'];
                   return FutureBuilder<Map<String, dynamic>>(
                     future: fetchGameDetails(gameId),
                     builder: (context, snapshot) {
@@ -127,22 +131,52 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         return const Center(child: Icon(Icons.error));
                       } else {
                         final gameDetails = snapshot.data!;
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                               builder: (context) => GameDetailPage(
-                                gameDetails: favoriteGames[index],
+                        if (gameDetails.containsKey('background_image')) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GameDetailPage(
+                                    gameDetails: gameDetails,
+                                    userId: widget.userId,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.red),
+                                borderRadius: BorderRadius.circular(10),
                               ),
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                      ),
+                                      child: Image.network(
+                                        gameDetails['background_image'] ?? '',
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    gameDetails['name'] ?? 'Nombre no disponible',
+                                    style: const TextStyle(color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                          child: Image.network(
-                            gameDetails['background_image'],
-                            fit: BoxFit.cover,
-                          ),
-                        );
+                            ),
+                          );
+                        } else {
+                          return const Center(child: Text('Detalles del juego no disponibles', style: TextStyle(color: Colors.white)));
+                        }
                       }
                     },
                   );

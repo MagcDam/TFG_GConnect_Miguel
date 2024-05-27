@@ -157,7 +157,7 @@ Future<void> authenticateUser(BuildContext context) async {
       print('Autenticación exitosa. Access Token: $accessToken, Refresh Token: $refreshToken');
       Navigator.pushReplacement(
         context, 
-        MaterialPageRoute(builder: (context) => const GameList()),
+        MaterialPageRoute(builder: (context) => GameList(accessToken: accessToken, email: _emailController.text),),
         );
     } else {
       // Si hubo algún error

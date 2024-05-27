@@ -4,8 +4,9 @@ import 'dart:convert';
 
 class GameDetailPage extends StatefulWidget {
   final Map<String, dynamic> gameDetails;
+  final int? userId;
 
-  const GameDetailPage({super.key, required this.gameDetails});
+  const GameDetailPage({super.key, required this.gameDetails, required this.userId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -17,12 +18,10 @@ class _GameDetailPageState extends State<GameDetailPage> {
   String? developer;
   String? publisher;
   bool isFavorite = false;
-  int? userId;
 
   @override
   void initState() {
     super.initState();
-    getUserData();
     checkFavouriteStatus();
     fetchDescription();
     fetchDeveloperAndPublisher();
@@ -81,35 +80,9 @@ class _GameDetailPageState extends State<GameDetailPage> {
     }
   }
 
-  Future<void> getUserData() async {
-    const String apiUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users?select=userId'; 
-    try {
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI',
-          'Content-Type': 'application/json'
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data is List && data.isNotEmpty) {
-          setState(() {
-            userId = data[0]['userId'];
-          });
-        } else {
-          print('No users found or data format is not a list');
-        }
-      } else {
-        print('Error en la solicitud: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
   Future<void> checkFavouriteStatus() async {
+    int? userId = widget.userId;
+    
     if (userId != null) {
       final response = await http.get(
         Uri.parse(
@@ -134,6 +107,7 @@ class _GameDetailPageState extends State<GameDetailPage> {
 void toggleFavourite() async {
   const supabaseUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI';
+  int? userId = widget.userId;
 
   if (userId != null) {
     setState(() {
