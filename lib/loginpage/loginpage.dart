@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Inicio de Sesión', // Título de la barra de la aplicación
+          'Login', // Título de la barra de la aplicación
           style: TextStyle(
             color: Colors.red, // Color del texto del título
           ),
@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
-                  labelText: 'Correo electrónico', // Etiqueta del campo de correo electrónico
+                  labelText: 'Email', // Etiqueta del campo de correo electrónico
                   labelStyle: const TextStyle(color: Colors.white), // Estilo de la etiqueta
                   filled: true,
                   fillColor: Colors.grey[800], // Color de fondo del campo de entrada
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: const TextStyle(color: Colors.white), // Color del texto
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, ingresa un correo electrónico'; // Validación de correo electrónico vacío
+                    return 'Please, enter an email'; // Validación de correo electrónico vacío
                   }
                   return null;
                 },
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
-                  labelText: 'Contraseña', // Etiqueta del campo de contraseña
+                  labelText: 'Password', // Etiqueta del campo de contraseña
                   labelStyle: const TextStyle(color: Colors.white), // Estilo de la etiqueta
                   filled: true,
                   fillColor: Colors.grey[800], // Color de fondo del campo de entrada
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true, // Mostrar puntos en lugar de texto para la contraseña
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, ingresa una contraseña'; // Validación de contraseña vacía
+                    return 'Please, enter a password'; // Validación de contraseña vacía
                   }
                   return null;
                 },
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.red), // Color de fondo del botón
                 ),
                 child: const Text(
-                  'Iniciar Sesión', // Texto del botón
+                  'Login', // Texto del botón
                   style: TextStyle(
                     color: Colors.white, // Color del texto del botón
                   ),
@@ -129,44 +129,75 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-// Método para autenticar al usuario utilizando Supabase
+  // Método para mostrar un SnackBar
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
 Future<void> authenticateUser(BuildContext context) async {
-  final Map<String, dynamic> userData = {
-    'email': _emailController.text,
-    'password': _passwordController.text,
-  };
+  final String email = _emailController.text;
+  final String password = _passwordController.text;
 
   const String apiUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/auth/v1/token?grant_type=password';
 
   try {
-    final response = await http.post(
-      Uri.parse(apiUrl),
+    // Fetch user from the database based on email
+    final userResponse = await http.get(
+      Uri.parse('https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users?email=eq.$email'),
       headers: <String, String>{
-        'Content-Type': 'application/json',
-        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI'
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI', // Replace with your Supabase API key
       },
-      body: jsonEncode(userData),
     );
 
-    if (response.statusCode == 200) {
-      // La autenticación fue exitosa
-      final responseData = jsonDecode(response.body);
-      final accessToken = responseData['access_token'];
-      final refreshToken = responseData['refresh_token'];
-      // Aquí puedes manejar el token de acceso y de actualización según tus necesidades
-      print('Autenticación exitosa. Access Token: $accessToken, Refresh Token: $refreshToken');
-      Navigator.pushReplacement(
-        context, 
-        MaterialPageRoute(builder: (context) => GameList(accessToken: accessToken, email: _emailController.text),),
+    if (userResponse.statusCode == 200) {
+      final userData = jsonDecode(userResponse.body);
+
+      print(userResponse.body);
+
+      // Check if user exists and password matches
+      if (userData.length > 0 && userData[0]['password'] == password) {
+        // If user exists and password matches, proceed with authentication
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI', // Replace with your Supabase API key
+          },
+          body: jsonEncode({
+            'email': email,
+            'password': password,
+          }),
         );
+
+        if (response.statusCode == 200) {
+          // Authentication successful
+          final responseData = jsonDecode(response.body);
+          final accessToken = responseData['access_token'];
+          final refreshToken = responseData['refresh_token'];
+          print('Authentication successful. Access Token: $accessToken, Refresh Token: $refreshToken');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => GameList(accessToken: accessToken, email: email)),
+          );
+        } else {
+          // Authentication failed
+          print('Error al autenticar usuario: ${response.statusCode}');
+          _showSnackBar('Error al iniciar sesión, correo electrónico o contraseña incorrectos');
+          print(response.body);
+        }
+      } else {
+        // User not found or incorrect password
+        print('Usuario no encontrado o contraseña incorrecta');
+        _showSnackBar('Error al iniciar sesión, correo electrónico o contraseña incorrectos');
+      }
     } else {
-      // Si hubo algún error
-      print('Error al autenticar usuario: ${response.statusCode}');
-      // Aquí puedes manejar el error según tus necesidades, como mostrar un mensaje al usuario
+      // Error fetching user data
+      print('Error al buscar usuario: ${userResponse.statusCode}');
+      _showSnackBar('Error al iniciar sesión, intente de nuevo más tarde');
     }
   } catch (error) {
     print('Error al autenticar usuario: $error');
-    // Aquí puedes manejar el error según tus necesidades, como mostrar un mensaje al usuario
+    _showSnackBar('Error al iniciar sesión, intente de nuevo más tarde');
   }
 }
 

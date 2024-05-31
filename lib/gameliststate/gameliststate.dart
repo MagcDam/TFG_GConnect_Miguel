@@ -94,16 +94,19 @@ Future<void> getUserData() async {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
+              DrawerHeader(
+                decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 39, 39, 39),
                 ),
-                child: Text(
-                  'GConnect Menu',
-                  style: TextStyle(color: Colors.red),
+                child: Center(
+                  child: Image.asset(
+                    'assets/logotfg.png', // Reemplaza con la ruta de tu logo
+                    height: 400, // Tamaño ajustado del logo
+                  ),
                 ),
               ),
               ListTile(
+                leading: const Icon(Icons.search, color: Colors.red),
                 title: const Text(
                   'Search',
                   style: TextStyle(color: Colors.red),
@@ -116,6 +119,7 @@ Future<void> getUserData() async {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.person, color: Colors.red),
                 title: const Text(
                   'Profile',
                   style: TextStyle(color: Colors.red),
@@ -129,8 +133,9 @@ Future<void> getUserData() async {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.info, color: Colors.red),
                 title: const Text(
-                  'Credits',
+                  'Additional',
                   style: TextStyle(color: Colors.red),
                 ),
                 onTap: () {

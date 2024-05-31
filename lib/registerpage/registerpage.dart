@@ -13,33 +13,44 @@ class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key, required this.supabaseClient});
 
   @override
-  // ignore: library_private_types_in_public_api
   _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>(); // Clave global para el formulario
-  late TextEditingController _usernameController; // Controlador para el nombre de usuario
-  late TextEditingController _emailController; // Controlador para el correo electrónico
-  late TextEditingController _passwordController; // Controlador para la contraseña
-  late TextEditingController _confirmPasswordController; // Controlador para confirmar la contraseña
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
 
   @override
   void initState() {
     super.initState();
-    _usernameController = TextEditingController(); // Inicialización del controlador del nombre de usuario
-    _emailController = TextEditingController(); // Inicialización del controlador del correo electrónico
-    _passwordController = TextEditingController(); // Inicialización del controlador de la contraseña
-    _confirmPasswordController = TextEditingController(); // Inicialización del controlador para confirmar la contraseña
+    _usernameController = TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _usernameController.dispose(); // Liberar el controlador del nombre de usuario
-    _emailController.dispose(); // Liberar el controlador del correo electrónico
-    _passwordController.dispose(); // Liberar el controlador de la contraseña
-    _confirmPasswordController.dispose(); // Liberar el controlador para confirmar la contraseña
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  bool _isValidPassword(String password) {
+    // La contraseña debe tener al menos 6 caracteres, una mayúscula y un número
+    if (password.length < 6) return false;
+    if (!password.contains(RegExp(r'[A-Z]'))) return false;
+    if (!password.contains(RegExp(r'[0-9]'))) return false;
+    return true;
   }
 
   @override
@@ -47,124 +58,129 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Registro de Usuario', // Título de la página de registro
+          'User register',
           style: TextStyle(
-            color: Colors.red, // Color del texto del título
+            color: Colors.red,
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 39, 39, 39), // Color de fondo de la barra de aplicación
+        backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       ),
-      backgroundColor: const Color.fromARGB(255, 39, 39, 39), // Color de fondo de la pantalla
+      backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey, // Asignación de la clave global al formulario
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                controller: _usernameController, // Asignación del controlador para el nombre de usuario
+                controller: _usernameController,
                 decoration: InputDecoration(
-                  labelText: 'Nombre de usuario', // Etiqueta del campo de nombre de usuario
-                  labelStyle: const TextStyle(color: Colors.white), // Estilo de la etiqueta
+                  labelText: 'Username',
+                  labelStyle: const TextStyle(color: Colors.white),
                   filled: true,
-                  fillColor: Colors.grey[800], // Color de fondo del campo de texto
+                  fillColor: Colors.grey[800],
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Bordes redondeados
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                style: const TextStyle(color: Colors.white), // Color del texto
+                style: const TextStyle(color: Colors.white),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, ingresa un nombre de usuario'; // Validación de nombre de usuario vacío
+                    return 'Please, enter a username';
+                  }
+                  if (value.length < 6) {
+                    return 'Username must be at least 6 characters long';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 10.0), // Separador entre campos
+              const SizedBox(height: 10.0),
               TextFormField(
-                controller: _emailController, // Asignación del controlador para el correo electrónico
+                controller: _emailController,
                 decoration: InputDecoration(
-                  labelText: 'Correo electrónico', // Etiqueta del campo de correo electrónico
-                  labelStyle: const TextStyle(color: Colors.white), // Estilo de la etiqueta
+                  labelText: 'Email',
+                  labelStyle: const TextStyle(color: Colors.white),
                   filled: true,
-                  fillColor: Colors.grey[800], // Color de fondo del campo de texto
+                  fillColor: Colors.grey[800],
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Bordes redondeados
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                style: const TextStyle(color: Colors.white), // Color del texto
+                style: const TextStyle(color: Colors.white),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, ingresa un correo electrónico'; // Validación de correo electrónico vacío
+                    return 'Please, enter an email';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Please, enter a valid email';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 10.0), // Separador entre campos
+              const SizedBox(height: 10.0),
               TextFormField(
-                controller: _passwordController, // Asignación del controlador para la contraseña
+                controller: _passwordController,
                 decoration: InputDecoration(
-                  labelText: 'Contraseña', // Etiqueta del campo de contraseña
-                  labelStyle: const TextStyle(color: Colors.white), // Estilo de la etiqueta
+                  labelText: 'Password',
+                  labelStyle: const TextStyle(color: Colors.white),
                   filled: true,
-                  fillColor: Colors.grey[800], // Color de fondo del campo de texto
+                  fillColor: Colors.grey[800],
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Bordes redondeados
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                style: const TextStyle(color: Colors.white), // Color del texto
-                obscureText: true, // Ocultar el texto de la contraseña
+                style: const TextStyle(color: Colors.white),
+                obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, ingresa una contraseña'; // Validación de contraseña vacía
+                    return 'Please, enter a password';
+                  }
+                  if (!_isValidPassword(value)) {
+                    return 'Password must be at least 6 characters long, include an uppercase letter and a number';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 10.0), // Separador entre campos
+              const SizedBox(height: 10.0),
               TextFormField(
-                controller: _confirmPasswordController, // Asignación del controlador para confirmar la contraseña
+                controller: _confirmPasswordController,
                 decoration: InputDecoration(
-                  labelText: 'Confirmar contraseña', // Etiqueta del campo de confirmación de contraseña
-                  labelStyle: const TextStyle(color: Colors.white), // Estilo de la etiqueta
+                  labelText: 'Confirm password',
+                  labelStyle: const TextStyle(color: Colors.white),
                   filled: true,
-                  fillColor: Colors.grey[800], // Color de fondo del campo de texto
+                  fillColor: Colors.grey[800],
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Bordes redondeados
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                style: const TextStyle(color: Colors.white), // Color del texto
-                obscureText: true, // Ocultar el texto de la contraseña
+                style: const TextStyle(color: Colors.white),
+                obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, confirma tu contraseña'; // Validación de confirmación de contraseña vacía
+                    return 'Please, confirm your password';
                   }
                   if (value != _passwordController.text) {
-                    return 'Las contraseñas no coinciden'; // Validación de coincidencia de contraseñas
+                    return 'Passwords don\'t match';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 16.0), // Separador entre el botón y los campos de entrada
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    // Imprimir los valores para depuración
-                    print('Contraseña: ${_passwordController.text}');
-                    print('Confirmar contraseña: ${_confirmPasswordController.text}');
-                    // Guardar datos en la base de datos de Supabase
                     insertUser(context);
                   }
                 },
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red), // Color de fondo del botón en rojo
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
                 ),
                 child: const Text(
-                  'Registrarse', // Texto del botón de registro
+                  'Register',
                   style: TextStyle(
-                    color: Colors.white, // Color del texto del botón en blanco
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -175,41 +191,51 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // Método para insertar un nuevo usuario en la base de datos de Supabase
-  Future<void> insertUser(BuildContext context) async {
-    //pop up error 
-    print('Estoy dentro de insert user');
-    final Map<String, dynamic> userData = {
-      'email': _emailController.text,
-      'username': _usernameController.text,
-      'password': _passwordController.text,
-    };
+Future<void> insertUser(BuildContext context) async {
+  final Map<String, dynamic> userData = {
+    'email': _emailController.text,
+    'username': _usernameController.text,
+    'password': _passwordController.text,
+  };
 
-    const String apiUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users';
+  final String authUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/auth/v1/signup';
+  final String restUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users';
 
-    print('Antes de insertar');
+  try {
+    // Registro de usuario
+    final authResponse = await http.post(
+      Uri.parse(authUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+      },
+      body: jsonEncode(userData),
+    );
 
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
+    // Verificación de éxito en el registro
+    if (authResponse.statusCode == 200) {
+      // Si el registro fue exitoso, también guardamos los datos en la tabla
+      final restResponse = await http.post(
+        Uri.parse(restUrl),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI'
+          'apikey': supabaseKey,
         },
         body: jsonEncode(userData),
       );
 
-      if (response.statusCode == 201) {
-      print('Usuario insertado correctamente.');
+      // Verificación de éxito en la inserción en la tabla
+      if (restResponse.statusCode == 201) {
+        _showSnackBar('User registered successfully');
       } else {
-      // Si hubo algún error
-      print('Error al insertar usuario: ${response.statusCode}');
+        _showSnackBar('Error when registering user in table: ${restResponse.reasonPhrase}');
       }
-    } catch (error) {
-      print('Error al insertar usuario: $error');
+    } else {
+      _showSnackBar('Error when registering user: ${authResponse.reasonPhrase}');
     }
-
-    print('despues de insertar');
-
+  } catch (error) {
+    _showSnackBar('Error when registering user: $error');
   }
+}
+
 }

@@ -32,7 +32,7 @@ class mainpage extends StatelessWidget {
               ),
               const SizedBox(height: 10.0),
               const Text(
-                'Alpha 0.1.2', // Versión de la aplicación
+                'Beta 1.5', // Versión de la aplicación
                 style: TextStyle(
                   fontSize: 12.0,
                   fontWeight: FontWeight.bold,

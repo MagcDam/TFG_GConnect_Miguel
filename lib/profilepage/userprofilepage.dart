@@ -87,7 +87,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       appBar: AppBar(
-        title: const Text('Perfil de Usuario', style: TextStyle(color: Colors.red),
+        title: const Text('User profile', style: TextStyle(color: Colors.red),
         ),
         backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       ),
@@ -97,17 +97,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              username ?? 'Cargando...',
+              username ?? 'Loading...',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Contador de juegos favoritos: $favoriteCount',
+              'Favorite games counter: $favoriteCount',
               style: const TextStyle(fontSize: 18, color: Colors.red),
             ),
             const SizedBox(height: 16.0),
             const Text(
-              'Juegos favoritos',
+              'Favorite games',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
             ),
             const SizedBox(height: 8.0),
