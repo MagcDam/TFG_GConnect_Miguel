@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gconnect/profilepage/userprofilepage.dart';
+import 'package:gconnect/searchedprofilepage/searchedprofilepage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../gamedetailpage/gamedetailpage.dart';
@@ -162,7 +162,7 @@ class _GameSearchPageState extends State<GameSearchPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => UserProfilePage(
+                      builder: (context) => SearchedProfilePage(
                         userId: user['userId'],
                       ),
                     ),

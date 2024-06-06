@@ -3,30 +3,30 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class GameDetailPage extends StatefulWidget {
-  final Map<String, dynamic> gameDetails;
-  final int? userId;
+  final Map<String, dynamic> gameDetails; // Detalles del juego
+  final int? userId; // ID del usuario (puede ser nulo si el usuario no está autenticado)
 
   const GameDetailPage({super.key, required this.gameDetails, required this.userId});
 
   @override
-  // ignore: library_private_types_in_public_api
   _GameDetailPageState createState() => _GameDetailPageState();
 }
 
 class _GameDetailPageState extends State<GameDetailPage> {
-  String? description;
-  String? developer;
-  String? publisher;
-  bool isFavorite = false;
+  String? description; // Descripción del juego
+  String? developer; // Desarrollador del juego
+  String? publisher; // Editor del juego
+  bool isFavorite = false; // Estado de favorito del juego
 
   @override
   void initState() {
     super.initState();
-    checkFavouriteStatus();
-    fetchDescription();
-    fetchDeveloperAndPublisher();
+    checkFavouriteStatus(); // Verifica si el juego está en favoritos
+    fetchDescription(); // Obtiene la descripción del juego
+    fetchDeveloperAndPublisher(); // Obtiene el desarrollador y el editor del juego
   }
 
+  // Función para obtener la descripción del juego
   Future<void> fetchDescription() async {
     final int gameId = widget.gameDetails['id'];
     final Uri uri = Uri.parse(
@@ -44,6 +44,7 @@ class _GameDetailPageState extends State<GameDetailPage> {
     }
   }
 
+  // Función para obtener el desarrollador y el editor del juego
   Future<void> fetchDeveloperAndPublisher() async {
     final int gameId = widget.gameDetails['id'];
     final Uri uri = Uri.parse(
@@ -67,6 +68,7 @@ class _GameDetailPageState extends State<GameDetailPage> {
     }
   }
 
+  // Función para obtener la clasificación por edad del juego
   String getAgeRating(String rating) {
     switch (rating.toLowerCase()) {
       case 'mature':
@@ -80,6 +82,7 @@ class _GameDetailPageState extends State<GameDetailPage> {
     }
   }
 
+  // Función para verificar si el juego está en la lista de favoritos del usuario
   Future<void> checkFavouriteStatus() async {
     int? userId = widget.userId;
     
@@ -104,67 +107,67 @@ class _GameDetailPageState extends State<GameDetailPage> {
     }
   }
 
-void toggleFavourite() async {
-  const supabaseUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI';
-  int? userId = widget.userId;
+  // Función para agregar o quitar el juego de la lista de favoritos del usuario
+  void toggleFavourite() async {
+    // URL y clave de autenticación de Supabase
+    const supabaseUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2bmxkbHlkbWpienJjZ2NqaXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM1MjIwMzMsImV4cCI6MjAyOTA5ODAzM30.YkCP0-lpW1sWD2ZMrJuLxuctRiMjvNl4PxP1fU5CDzI';
+    int? userId = widget.userId;
 
-  if (userId != null) {
-    setState(() {
-      isFavorite = !isFavorite;
-    });
+    if (userId != null) {
+      setState(() {
+        isFavorite = !isFavorite;
+      });
 
-    final gameId = widget.gameDetails['id'];
+      final gameId = widget.gameDetails['id'];
 
-    try {
-      final Uri postFavoriteUri = Uri.parse('$supabaseUrl/rest/v1/favoriteGames');
-      final Uri deleteFavoriteUri = Uri.parse('$supabaseUrl/rest/v1/favoriteGames?gameId=eq.$gameId&userId=eq.$userId');
+      try {
+        final Uri postFavoriteUri = Uri.parse('$supabaseUrl/rest/v1/favoriteGames');
+        final Uri deleteFavoriteUri = Uri.parse('$supabaseUrl/rest/v1/favoriteGames?gameId=eq.$gameId&userId=eq.$userId');
 
-      http.Response response;
+        http.Response response;
 
-      if (isFavorite) {
-        // Insert into favoriteGames table
-        response = await http.post(
-          postFavoriteUri,
-          headers: {
-            'apikey': supabaseKey,
-            'Content-Type': 'application/json',
-          },
-          body: json.encode({'gameId': gameId, 'userId': userId}),
-        );
-      } else {
-        // Delete from favoriteGames table
-        response = await http.delete(
-          deleteFavoriteUri,
-          headers: {
-            'apikey': supabaseKey,
-            'Content-Type': 'application/json',
-          },
-        );
+        if (isFavorite) {
+          // Insert into favoriteGames table
+          response = await http.post(
+            postFavoriteUri,
+            headers: {
+              'apikey': supabaseKey,
+              'Content-Type': 'application/json',
+            },
+            body: json.encode({'gameId': gameId, 'userId': userId}),
+          );
+        } else {
+          // Delete from favoriteGames table
+          response = await http.delete(
+            deleteFavoriteUri,
+            headers: {
+              'apikey': supabaseKey,
+              'Content-Type': 'application/json',
+            },
+          );
+        }
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          _showSnackBar(
+              'Game ${isFavorite ? 'added to' : 'removed from'} favorites');
+        } else {
+          print('Error: ${response.statusCode}');
+          print('Error response: ${response.body}');
+        }
+      } catch (error) {
+        print('Error: $error');
+        _showSnackBar('An error occurred');
       }
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        _showSnackBar(
-            'Game ${isFavorite ? 'added to' : 'removed from'} favorites');
-      } else {
-        print('Error: ${response.statusCode}');
-        print('Error response: ${response.body}');
-      }
-    } catch (error) {
-      print('Error: $error');
-      _showSnackBar('An error occurred');
     }
   }
-}
 
-
-
-
-
+  // Función para mostrar un SnackBar con un mensaje
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  // Función para construir una fila de detalles
   Widget _buildDetailRow(String title, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),

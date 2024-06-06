@@ -1,7 +1,7 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:http/http.dart' as http;
+import 'dart:convert'; // Para manejar la codificación y decodificación JSON
+import 'package:flutter/material.dart'; // Framework de UI de Flutter
+import 'package:supabase_flutter/supabase_flutter.dart'; // Paquete Supabase para Flutter
+import 'package:http/http.dart' as http; // Paquete para realizar solicitudes HTTP
 
 // URL y clave de autenticación de Supabase
 const String supabaseUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.com';
@@ -17,15 +17,16 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController _usernameController;
-  late TextEditingController _emailController;
-  late TextEditingController _passwordController;
-  late TextEditingController _confirmPasswordController;
+  final _formKey = GlobalKey<FormState>(); // Llave para manejar el formulario
+  late TextEditingController _usernameController; // Controlador para el campo de usuario
+  late TextEditingController _emailController; // Controlador para el campo de email
+  late TextEditingController _passwordController; // Controlador para el campo de contraseña
+  late TextEditingController _confirmPasswordController; // Controlador para el campo de confirmar contraseña
 
   @override
   void initState() {
     super.initState();
+    // Inicialización de los controladores de texto
     _usernameController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
@@ -34,6 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
+    // Liberación de los recursos de los controladores de texto
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -42,11 +44,12 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _showSnackBar(String message) {
+    // Muestra un mensaje en una SnackBar
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   bool _isValidPassword(String password) {
-    // La contraseña debe tener al menos 6 caracteres, una mayúscula y un número
+    // Validación de la contraseña (mínimo 6 caracteres, una mayúscula y un número)
     if (password.length < 6) return false;
     if (!password.contains(RegExp(r'[A-Z]'))) return false;
     if (!password.contains(RegExp(r'[0-9]'))) return false;
@@ -73,6 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Campo para el nombre de usuario
               TextFormField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -96,6 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 },
               ),
               const SizedBox(height: 10.0),
+              // Campo para el email
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -119,6 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 },
               ),
               const SizedBox(height: 10.0),
+              // Campo para la contraseña
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
@@ -143,6 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 },
               ),
               const SizedBox(height: 10.0),
+              // Campo para confirmar la contraseña
               TextFormField(
                 controller: _confirmPasswordController,
                 decoration: InputDecoration(
@@ -167,6 +174,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 },
               ),
               const SizedBox(height: 16.0),
+              // Botón de registro
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -191,32 +199,22 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-Future<void> insertUser(BuildContext context) async {
-  final Map<String, dynamic> userData = {
-    'email': _emailController.text,
-    'username': _usernameController.text,
-    'password': _passwordController.text,
-  };
+  // Función para insertar el usuario
+  Future<void> insertUser(BuildContext context) async {
+    final Map<String, dynamic> userData = {
+      'email': _emailController.text,
+      'username': _usernameController.text,
+      'password': _passwordController.text,
+    };
 
-  final String authUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/auth/v1/signup';
-  final String restUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users';
+    // URL para la autenticación y para la tabla
+    final String authUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/auth/v1/signup';
+    final String restUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users';
 
-  try {
-    // Registro de usuario
-    final authResponse = await http.post(
-      Uri.parse(authUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'apikey': supabaseKey,
-      },
-      body: jsonEncode(userData),
-    );
-
-    // Verificación de éxito en el registro
-    if (authResponse.statusCode == 200) {
-      // Si el registro fue exitoso, también guardamos los datos en la tabla
-      final restResponse = await http.post(
-        Uri.parse(restUrl),
+    try {
+      // Registro de usuario
+      final authResponse = await http.post(
+        Uri.parse(authUrl),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'apikey': supabaseKey,
@@ -224,18 +222,29 @@ Future<void> insertUser(BuildContext context) async {
         body: jsonEncode(userData),
       );
 
-      // Verificación de éxito en la inserción en la tabla
-      if (restResponse.statusCode == 201) {
-        _showSnackBar('User registered successfully');
-      } else {
-        _showSnackBar('Error when registering user in table: ${restResponse.reasonPhrase}');
-      }
-    } else {
-      _showSnackBar('Error when registering user: ${authResponse.reasonPhrase}');
-    }
-  } catch (error) {
-    _showSnackBar('Error when registering user: $error');
-  }
-}
+      // Verificación de éxito en el registro
+      if (authResponse.statusCode == 200) {
+        // Si el registro fue exitoso, también guardamos los datos en la tabla
+        final restResponse = await http.post(
+          Uri.parse(restUrl),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'apikey': supabaseKey,
+          },
+          body: jsonEncode(userData),
+        );
 
+        // Verificación de éxito en la inserción en la tabla
+        if (restResponse.statusCode == 201) {
+          _showSnackBar('User registered successfully');
+        } else {
+          _showSnackBar('Error when registering user in table: ${restResponse.reasonPhrase}');
+        }
+      } else {
+        _showSnackBar('Error when registering user: ${authResponse.reasonPhrase}');
+      }
+    } catch (error) {
+      _showSnackBar('Error when registering user: $error');
+    }
+  }
 }

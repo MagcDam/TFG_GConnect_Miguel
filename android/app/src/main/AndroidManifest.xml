@@ -8,7 +8,7 @@
     <application
         android:label="gconnect"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/logoapp">
 
         <!-- Tu actividad principal -->
         <activity

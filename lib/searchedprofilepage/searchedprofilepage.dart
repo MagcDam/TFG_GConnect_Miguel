@@ -1,31 +1,29 @@
-import 'package:flutter/material.dart'; // Framework de UI de Flutter
-import 'package:gconnect/gamedetailpage/gamedetailpage.dart'; // Página de detalles del juego
-import 'package:http/http.dart' as http; // Paquete para realizar solicitudes HTTP
-import 'dart:convert'; // Para manejar la codificación y decodificación JSON
-import 'package:gconnect/changeinformationpage/changeinformationpage.dart';  // Asegúrate de importar la página correctamente
+import 'package:flutter/material.dart';
+import 'package:gconnect/gamedetailpage/gamedetailpage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class UserProfilePage extends StatefulWidget {
-  final int? userId; // ID del usuario, puede ser nulo
+class SearchedProfilePage extends StatefulWidget {
+  final int? userId;
 
-  const UserProfilePage({Key? key, required this.userId}) : super(key: key);
+  const SearchedProfilePage({Key? key, required this.userId}) : super(key: key);
 
   @override
-  _UserProfilePageState createState() => _UserProfilePageState();
+  _SearchedProfilePage createState() => _SearchedProfilePage();
 }
 
-class _UserProfilePageState extends State<UserProfilePage> {
-  String? username; // Nombre de usuario, puede ser nulo
-  int favoriteCount = 0; // Contador de juegos favoritos
-  List<dynamic> favoriteGames = []; // Lista de juegos favoritos
+class _SearchedProfilePage extends State<SearchedProfilePage> {
+  String? username;
+  int favoriteCount = 0;
+  List<dynamic> favoriteGames = [];
 
   @override
   void initState() {
     super.initState();
-    fetchUserData(); // Llama a la función para obtener datos del usuario
-    fetchFavoriteGames(); // Llama a la función para obtener juegos favoritos
+    fetchUserData();
+    fetchFavoriteGames();
   }
 
-  // Función para obtener datos del usuario desde la API
   Future<void> fetchUserData() async {
     const String apiUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/users';
     final response = await http.get(
@@ -40,15 +38,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
       final data = json.decode(response.body);
       if (data is List && data.isNotEmpty) {
         setState(() {
-          username = data[0]['username']; // Actualiza el nombre de usuario
+          username = data[0]['username'];
         });
       }
     } else {
-      throw Exception('Failed to load user data'); // Manejo de error
+      throw Exception('Failed to load user data');
     }
   }
 
-  // Función para obtener juegos favoritos desde la API
   Future<void> fetchFavoriteGames() async {
     const String apiUrl = 'https://jvnldlydmjbzrcgcjizc.supabase.co/rest/v1/favoriteGames';
     final response = await http.get(
@@ -63,16 +60,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
       final data = json.decode(response.body);
       if (data is List) {
         setState(() {
-          favoriteCount = data.length; // Actualiza el contador de favoritos
-          favoriteGames = data; // Actualiza la lista de juegos favoritos
+          favoriteCount = data.length;
+          favoriteGames = data;
         });
       }
     } else {
-      throw Exception('Failed to load favorite games'); // Manejo de error
+      throw Exception('Failed to load favorite games');
     }
   }
 
-  // Función para obtener detalles de un juego desde la API
   Future<Map<String, dynamic>> fetchGameDetails(int gameId) async {
     final Uri uri = Uri.parse(
         'https://api.rawg.io/api/games/$gameId?key=8b39d93d87ba4d90bc0a1db9c0aea2b9');
@@ -80,51 +76,31 @@ class _UserProfilePageState extends State<UserProfilePage> {
     final response = await http.get(uri);
     if (response.statusCode == 200) {
       final decodedResponse = json.decode(response.body);
-      return decodedResponse; // Retorna los detalles del juego
+      return decodedResponse;
     } else {
-      throw Exception('Failed to load game details'); // Manejo de error
+      throw Exception('Failed to load game details');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 39, 39, 39), // Color de fondo
+      backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       appBar: AppBar(
-        title: const Text(
-          'User profile',
-          style: TextStyle(color: Colors.red), // Estilo del título
+        title: const Text('User profile', style: TextStyle(color: Colors.red),
         ),
-        backgroundColor: const Color.fromARGB(255, 39, 39, 39), // Color del AppBar
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.red), // Icono de configuración
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChangeInformationPage(userId: widget.userId.toString()), // Navega a la página de cambiar información
-                ),
-              );
-            },
-          ),
-        ],
+        backgroundColor: const Color.fromARGB(255, 39, 39, 39),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Muestra el nombre de usuario o "Loading..." si aún no se ha cargado
             Text(
               username ?? 'Loading...',
-              style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 8.0),
-            // Muestra el contador de juegos favoritos
             Text(
               'Favorite games counter: $favoriteCount',
               style: const TextStyle(fontSize: 18, color: Colors.red),
@@ -132,19 +108,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
             const SizedBox(height: 16.0),
             const Text(
               'Favorite games',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
             ),
             const SizedBox(height: 8.0),
-            // Muestra la lista de juegos favoritos en una cuadrícula
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // Número de columnas en la cuadrícula
-                  mainAxisSpacing: 10, // Espaciado principal
-                  crossAxisSpacing: 10, // Espaciado cruzado
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
                 ),
                 itemCount: favoriteGames.length,
                 itemBuilder: (context, index) {
@@ -154,9 +126,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     future: fetchGameDetails(gameId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator()); // Muestra un indicador de carga
+                        return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
-                        return const Center(child: Icon(Icons.error)); // Muestra un icono de error
+                        return const Center(child: Icon(Icons.error));
                       } else {
                         final gameDetails = snapshot.data!;
                         if (gameDetails.containsKey('background_image')) {
@@ -179,7 +151,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               ),
                               child: Column(
                                 children: [
-                                  // Muestra la imagen de fondo del juego
                                   Expanded(
                                     child: ClipRRect(
                                       borderRadius: const BorderRadius.only(
@@ -194,11 +165,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     ),
                                   ),
                                   const SizedBox(height: 5),
-                                  // Muestra el nombre del juego
                                   Text(
                                     gameDetails['name'] ?? 'Nombre no disponible',
-                                    style:
-                                        const TextStyle(color: Colors.white),
+                                    style: const TextStyle(color: Colors.white),
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
@@ -206,9 +175,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ),
                           );
                         } else {
-                          return const Center(
-                              child: Text('Detalles del juego no disponibles',
-                                  style: TextStyle(color: Colors.white)));
+                          return const Center(child: Text('Detalles del juego no disponibles', style: TextStyle(color: Colors.white)));
                         }
                       }
                     },
